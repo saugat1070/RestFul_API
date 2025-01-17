@@ -15,6 +15,19 @@ from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework import generics
 
+#for use endpoint on restframework
+from rest_framework.reverse import reverse
+
+@api_view(['GET'])
+def api_root(request,format=None):
+    return Response(
+        {
+            'movie':reverse('movie_list',request=request,format = format),
+            'PlatForm':reverse('stream_list',request = request, format = format)
+        }
+    )
+
+
 
 def home(request):
     return HttpResponse('<h1>hello world</h1>')
@@ -74,17 +87,25 @@ def home(request):
 #         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class movie_list(APIView):
-    def get(self,format=None):
-        list_name = WatchList.objects.all()
-        serializer_list = WatchListSerializer(list_name, many=True)
-        return Response(serializer_list.data)
+# class movie_list(APIView):
+#     def get(self,format=None):
+#         list_name = WatchList.objects.all()
+#         serializer_list = WatchListSerializer(list_name, many=True)
+#         return Response(serializer_list.data)
 
-class movie_details(APIView):
-    def get(self,pk,request,format= None):
-        list_name = WatchList.objects.get(pk=pk)
-        serializer_list = WatchListSerializer(list_name)
-        return Response(serializer_list.data) 
+# class movie_details(APIView):
+#     def get(self,request,pk,format= None):
+#         list_name = WatchList.objects.get(pk=pk)
+#         serializer_list = WatchListSerializer(list_name)
+#         return Response(serializer_list.data) 
+#     def put(self,pk,request,format=None):
+#         movie_name = WatchList.objects.get(pk = pk)
+#         serializer = WatchListSerializer(serializer,data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data,status=status.HTTP_202_ACCEPTED)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        
 
 
 # class stream_list(APIView):
@@ -165,3 +186,12 @@ class stream_details(mixins.RetrieveModelMixin,
     def delete(self, request, *args, **kwargs):
         response =  self.destroy(request, *args, **kwargs)
         return response
+
+class movie_list(generics.ListCreateAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+
+class movie_details(generics.RetrieveUpdateDestroyAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    
