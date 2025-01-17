@@ -11,6 +11,10 @@ from rest_framework.decorators import api_view
 #list_data = get , post -->no pk require
 from rest_framework.views import APIView
 
+#for use mixins
+from rest_framework import mixins
+from rest_framework import generics
+
 
 def home(request):
     return HttpResponse('<h1>hello world</h1>')
@@ -83,47 +87,81 @@ class movie_details(APIView):
         return Response(serializer_list.data) 
 
 
-class stream_list(APIView):
-    def get(self,request,format=None):
-        stream_name = PlatForm.objects.all()
-        serializer_list = PlatFormSerializer(stream_name, many=True)
-        return Response(serializer_list.data)
+# class stream_list(APIView):
+#     def get(self,request,format=None):
+#         stream_name = PlatForm.objects.all()
+#         serializer_list = PlatFormSerializer(stream_name, many=True)
+#         return Response(serializer_list.data)
     
-    def post(self,request,format=None):
-        stream_name = PlatForm.objects.all()
-        serializer_list = PlatFormSerializer(data=request.data)
-        if serializer_list.is_valid():
-            serializer_list.save()
-            return Response(serializer_list.data,status=status.HTTP_201_CREATED)
-        return Response(serializer_list.errors,status=status.HTTP_400_BAD_REQUEST)
+#     def post(self,request,format=None):
+#         stream_name = PlatForm.objects.all()
+#         serializer_list = PlatFormSerializer(data=request.data)
+#         if serializer_list.is_valid():
+#             serializer_list.save()
+#             return Response(serializer_list.data,status=status.HTTP_201_CREATED)
+#         return Response(serializer_list.errors,status=status.HTTP_400_BAD_REQUEST)
         
-class stream_details(APIView):
+# class stream_details(APIView):
     
-    def get_object(self,pk):
-        try:
-            platform_name = PlatForm.objects.get(pk = pk)
-            return platform_name
-        except PlatForm.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+#     def get_object(self,pk):
+#         try:
+#             platform_name = PlatForm.objects.get(pk = pk)
+#             return platform_name
+#         except PlatForm.DoesNotExist:
+#             return Response(status=status.HTTP_404_NOT_FOUND)
     
-    def put(self,request,pk,format = None):
-        platform_name = self.get_object(pk)
-        serializer = PlatFormSerializer(platform_name, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+#     def put(self,request,pk,format = None):
+#         platform_name = self.get_object(pk)
+#         serializer = PlatFormSerializer(platform_name, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-    def get(self,request,pk,format = None):
-        platform_name = self.get_object(pk)
-        serializer = PlatFormSerializer(platform_name)
-        return Response(serializer.data)
+#     def get(self,request,pk,format = None):
+#         platform_name = self.get_object(pk)
+#         serializer = PlatFormSerializer(platform_name)
+#         return Response(serializer.data)
     
-    def delete(self,request,pk,format= None):
-        Platform_name = self.get_object(pk)
-        serializer = PlatFormSerializer(Platform_name,data = request.data)
-        if serializer.is_valid():
-            serializer.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-            
-        
+#     def delete(self,request,pk,format= None):
+#         Platform_name = self.get_object(pk)
+#         serializer = PlatFormSerializer(Platform_name,data = request.data)
+#         if serializer.is_valid():
+#             serializer.delete()
+#             return Response(status=status.HTTP_204_NO_CONTENT)
+
+class stream_list(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    
+    queryset = PlatForm.objects.all()
+    serializer_class = PlatFormSerializer
+    
+    def get(self,request,*args,**kwargs):
+        return self.list(request,*args,**kwargs)
+    
+    def post(self,request,*args,**kwargs):
+        return self.create(request,*args,**kwargs)
+    
+    
+
+class stream_details(mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,
+                     generics.GenericAPIView):
+    #RetrieveModelMixin --> It can retrieve a single object 
+    #by its primary key(e.g.,for an HTTP GET request)
+    
+    queryset = PlatForm.objects.all()
+    serializer_class = PlatFormSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        response = self.update(request, *args, **kwargs)
+        return response
+
+    def delete(self, request, *args, **kwargs):
+        response =  self.destroy(request, *args, **kwargs)
+        return response
