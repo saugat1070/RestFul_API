@@ -13,7 +13,7 @@ class PlatForm(models.Model):
 class WatchList(models.Model):
     title = models.CharField(max_length=50)
     storyline = models.CharField(max_length=100)
-    platform = models.ForeignKey(PlatForm,on_delete=models.CASCADE)
+    platform = models.ForeignKey(PlatForm, on_delete=models.CASCADE, related_name='watch_related')
     active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add = True)
     

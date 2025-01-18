@@ -31,14 +31,23 @@ from .models import WatchList
 #         instance.save()
         
 #         return instance
-        
+  
+     
 class WatchListSerializer(serializers.ModelSerializer):
     platform = serializers.ReadOnlyField(source = 'platform.name')
+
     class Meta:
         model = WatchList
         fields = ['id','title','storyline','platform','active','created']
 
 
+
+class PlatFormSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='stream_details')
+    watch_related = WatchListSerializer(many = True, read_only = True)
+    class Meta:
+        model = PlatForm
+        fields = '__all__' 
 # class PlatFormSerializer(serializers.Serializer):
 #     id = serializers.IntegerField(read_only=True)
 #     name = serializers.CharField(max_length=50)
@@ -61,8 +70,4 @@ class WatchListSerializer(serializers.ModelSerializer):
 #         instance.website = validated_data.get('website', instance.website)
 #         instance.save()
 #         return instance
-class PlatFormSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='stream_details')
-    class Meta:
-        model = PlatForm
-        fields = '__all__'
+
