@@ -18,6 +18,9 @@ from rest_framework import generics
 #for use endpoint on restframework
 from rest_framework.reverse import reverse
 
+from .models import Review
+from .serializers import ReviewSerializer
+
 @api_view(['GET'])
 def api_root(request,format=None):
     return Response(
@@ -194,4 +197,26 @@ class movie_list(generics.ListCreateAPIView):
 class movie_details(generics.RetrieveUpdateDestroyAPIView):
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
+    
+
+class movie_review(generics.ListAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Review.objects.filter(watchlist = pk)
+
+class Review_create(generics.CreateAPIView):
+    serializer_class = ReviewSerializer
+    
+    def perform_create(self,serializer):
+        pk = self.kwargs['pk']
+        movie = WatchList.objects.get(pk = pk)
+        serializer.save(watchlist = movie)
+        return serializer
+
+class review_details(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
     

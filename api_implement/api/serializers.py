@@ -1,6 +1,7 @@
 from rest_framework import  serializers
 from .models import PlatForm
 from .models import WatchList
+from .models import Review
 
 # class WatchListSerializer(serializers.Serializer):
 #     id = serializers.IntegerField(read_only=True)
@@ -44,7 +45,8 @@ class WatchListSerializer(serializers.ModelSerializer):
 
 class PlatFormSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='stream_details')
-    watch_related = WatchListSerializer(many = True, read_only = True)
+   # watch_related = WatchListSerializer(many = True, read_only = True)
+    watch_related = serializers.StringRelatedField(many=True,read_only = True)
     class Meta:
         model = PlatForm
         fields = '__all__' 
@@ -71,3 +73,7 @@ class PlatFormSerializer(serializers.HyperlinkedModelSerializer):
 #         instance.save()
 #         return instance
 
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'

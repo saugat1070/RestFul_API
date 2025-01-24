@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import MinValueValidator,MaxValueValidator
 # Create your models here.
 class PlatForm(models.Model):
     name = models.CharField(max_length=50)
@@ -19,4 +19,17 @@ class WatchList(models.Model):
     
     def __str__(self):
         return self.title
+
+
+class Review(models.Model):
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
+    desc = models.CharField(max_length=100)
+    watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE,related_name='reviews')
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f'{self.rating} {self.watchlist.title}'
+    
     
