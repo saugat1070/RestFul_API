@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator,MaxValueValidator
+from django.contrib.auth.models import User
 # Create your models here.
 class PlatForm(models.Model):
     name = models.CharField(max_length=50)
@@ -25,6 +26,7 @@ class Review(models.Model):
     rating = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
     desc = models.CharField(max_length=100)
     watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE,related_name='reviews')
+    review_user = models.ForeignKey(User, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

@@ -17,7 +17,7 @@ from rest_framework import generics
 
 #for use endpoint on restframework
 from rest_framework.reverse import reverse
-
+from rest_framework.serializers import ValidationError 
 from .models import Review
 from .serializers import ReviewSerializer
 
@@ -208,15 +208,31 @@ class movie_review(generics.ListAPIView):
         return Review.objects.filter(watchlist = pk)
 
 class Review_create(generics.CreateAPIView):
+    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     
     def perform_create(self,serializer):
         pk = self.kwargs['pk']
         movie = WatchList.objects.get(pk = pk)
-        serializer.save(watchlist = movie)
+        review_user = self.request.user
+        review_quaryset = Review.objects.filter(review_user = review_user , watchlist = movie )
+        if review_quaryset.exists():
+            raise ValidationError('Review is already created!')
+        serializer.save(watchlist = movie, review_user = review_user)
         return serializer
 
+class review_List(generics.ListAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    
+    
 class review_details(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        details = Review.objects.filter(pk = pk)
+        return details
+        
+        
