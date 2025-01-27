@@ -26,8 +26,12 @@ SECRET_KEY = 'django-insecure-_+tsx7en+=ed#h48$(jf3t80-(30jid&9-1)%@ikadppg5=%nh
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
+#restful authentication
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
 # Application definition
 
 INSTALLED_APPS = [
