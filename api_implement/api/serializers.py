@@ -35,11 +35,10 @@ from .models import Review
   
      
 class WatchListSerializer(serializers.ModelSerializer):
-    platform = serializers.ReadOnlyField(source = 'platform.name')
 
     class Meta:
         model = WatchList
-        fields = ['id','title','storyline','platform','active','created']
+        fields = '__all__'
 
 
 
@@ -74,7 +73,6 @@ class PlatFormSerializer(serializers.HyperlinkedModelSerializer):
 #         return instance
 
 class ReviewSerializer(serializers.ModelSerializer):
-    review_user = serializers.StringRelatedField(read_only = True)
     watchlist = serializers.StringRelatedField(read_only = True)
     class Meta:
         model = Review

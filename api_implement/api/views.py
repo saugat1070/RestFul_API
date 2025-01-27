@@ -20,6 +20,7 @@ from rest_framework.reverse import reverse
 from rest_framework.serializers import ValidationError 
 from .models import Review
 from .serializers import ReviewSerializer
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET'])
 def api_root(request,format=None):
@@ -219,7 +220,7 @@ class Review_create(generics.CreateAPIView):
         if review_quaryset.exists():
             raise ValidationError('Review is already created!')
         serializer.save(watchlist = movie, review_user = review_user)
-        return serializer
+        
 
 class review_List(generics.ListAPIView):
     queryset = Review.objects.all()
@@ -234,5 +235,8 @@ class review_details(generics.RetrieveUpdateDestroyAPIView):
         pk = self.kwargs['pk']
         details = Review.objects.filter(pk = pk)
         return details
-        
+    
+    def perform_destroy(self, instance):
+        instance.delete()
+             
         
