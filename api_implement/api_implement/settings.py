@@ -86,18 +86,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'djongo',
-#         'NAME': 'rest_ful',
-#         'CLIENT':{
-#             'host':'mongodb+srv://saugatgiri1070:helloworld@cluster0.is64i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-#             'username' : 'saugatgiri1070',
-#             'password' : 'helloworld'
-#         }
-#     }
-# }
-
 
 
 # Password validation
